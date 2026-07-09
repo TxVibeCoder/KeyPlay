@@ -365,10 +365,37 @@ document.addEventListener("click", (e) => {
   }
 });
 
+function clearRoll() {
+  if (state.mode === "play") stopAll();
+  state.take = [];
+  state.selected = null;
+  setStatus("roll cleared");
+}
+
+// Clear all: two-click arm so a stray click can't wipe a whole take.
+let clearArmed = false, clearTimer = null;
+function disarmClear() {
+  clearArmed = false;
+  if (clearTimer) { clearTimeout(clearTimer); clearTimer = null; }
+  $("clearall").textContent = "🗑 Clear all";
+  $("clearall").classList.remove("armed");
+}
+
 $("rec").onclick = toggleRecord;
 $("play").onclick = () => (state.mode === "play" ? stopAll() : startPlayback());
 $("save").onclick = saveTake;
-$("discard").onclick = () => { state.take = []; state.selected = null; setStatus("take discarded"); };
+$("clearall").onclick = () => {
+  if (!state.take.length) { disarmClear(); setStatus("roll is already empty"); return; }
+  if (!clearArmed) {
+    clearArmed = true;
+    $("clearall").textContent = "Clear all?";
+    $("clearall").classList.add("armed");
+    clearTimer = setTimeout(disarmClear, 3000);
+    return;
+  }
+  disarmClear();
+  clearRoll();
+};
 $("metro").onclick = () => { recorder.metronome = !recorder.metronome; syncUi(); };
 $("overdub").onclick = () => { state.overdub = !state.overdub; syncUi(); };
 $("layout").onclick = toggleLayout;

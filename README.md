@@ -49,7 +49,7 @@ what the *typing* keys play) — the slider just moves what the on-screen keyboa
 - **Overdub**: with the **Overdub** toggle on (default), each new recording layers
   onto the existing take instead of replacing it — record the left hand first, then
   the right hand on a second pass; you hear the first pass play back while you record
-  the second. Turn Overdub off (or **Discard**) to start a take from scratch.
+  the second. Turn Overdub off (or **Clear all**) to start a take from scratch.
 - **Save**: writes `output/<timestamp>_<name>.mid` (format 1 — left hand and right
   hand as separate tracks) plus a JSON sidecar of the raw take. Optional quantize
   (1/8 or 1/16, with strength) is applied at save time.

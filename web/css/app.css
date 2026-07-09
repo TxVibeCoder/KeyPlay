@@ -28,6 +28,7 @@ body {
 .btn.big { font-size: 18px; padding: 10px 34px; }
 .btn.subtle { opacity: 0.7; }
 .btn.recording { background: #8c2430; border-color: #c04252; color: #fff; }
+.btn.armed { background: #8c2430; border-color: #c04252; color: #fff; opacity: 1; }
 .btn.toggle.active { background: #3d5a3d; border-color: #5d8a5d; }
 .field { display: inline-flex; align-items: center; gap: 5px; color: #9a988f; }
 .field input[type="number"] { width: 56px; }
