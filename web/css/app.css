@@ -52,6 +52,27 @@ input, select {
 
 .hidden { display: none !important; }
 
+/* keyboard-octave slider: a "box" thumb that slides along a slim track */
+#octslider {
+  -webkit-appearance: none; appearance: none;
+  width: 96px; height: 18px; padding: 0; background: transparent; cursor: pointer;
+}
+#octslider::-webkit-slider-runnable-track {
+  height: 6px; border-radius: 3px; background: #17181c; border: 1px solid #43454f;
+}
+#octslider::-moz-range-track {
+  height: 6px; border-radius: 3px; background: #17181c; border: 1px solid #43454f;
+}
+#octslider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; margin-top: -6px;
+  width: 20px; height: 16px; border-radius: 3px;
+  background: #e8a33d; border: 1px solid #a5721f;
+}
+#octslider::-moz-range-thumb {
+  width: 20px; height: 16px; border-radius: 3px;
+  background: #e8a33d; border: 1px solid #a5721f;
+}
+
 /* ---------- side panel ---------- */
 #side {
   position: absolute; top: 96px; right: 10px; z-index: 5;

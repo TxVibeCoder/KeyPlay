@@ -30,6 +30,11 @@ Two input layouts, toggle with **F9** or the **Split hands / Traditional** butto
 at **A = middle C**: home row `a s d f g h j k l ;` = white keys, the row above
 (`w e   t y u   o p`) = the sharps. One octave control (any arrow key), one feel
 preset. Notes still split into bass/treble tracks at middle C on export.
+
+**Keyboard window** — the **Keys** slider in the toolbar pans the on-screen piano up
+or down the full range (C1–C6 / C2–C7 / C3–C8) so you can see and mouse-play higher
+or lower octaves. This is independent of the per-hand octave shift (which transposes
+what the *typing* keys play) — the slider just moves what the on-screen keyboard shows.
 - **Feel presets** (`F5`–`F8`: Lively, Soft, Dramatic, Warm): typing keys carry no
   velocity, so the active preset generates it — base level, humanized jitter, and
   beat accents (when the click is on). Each note is stamped with the feel that was

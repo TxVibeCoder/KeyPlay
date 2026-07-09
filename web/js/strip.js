@@ -4,7 +4,6 @@
 // up under its roll lane and over its key. Also a click target for auditioning a
 // pitch and for mouse note-entry.
 
-import { KBD_LO, KBD_HI } from "./keyboard.js";
 import { isBlack, noteName } from "./keymap.js";
 
 export class NoteStrip {
@@ -42,7 +41,7 @@ export class NoteStrip {
   _pitchAt(x) {
     if (!this.columnFor) return null;
     for (const black of [true, false]) {
-      for (let n = KBD_LO; n <= KBD_HI; n++) {
+      for (let n = 21; n <= 108; n++) {
         const col = this.columnFor(n);
         if (col && col.black === black && x >= col.x && x <= col.x + col.w) return n;
       }
@@ -60,7 +59,7 @@ export class NoteStrip {
 
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    for (let n = KBD_LO; n <= KBD_HI; n++) {
+    for (let n = 21; n <= 108; n++) {
       const col = this.columnFor(n);
       if (!col) continue;
       const lit = active && active.has(n);

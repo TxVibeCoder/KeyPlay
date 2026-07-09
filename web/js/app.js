@@ -1,7 +1,7 @@
 import { codeToNote, codeToNoteTraditional, zoneLabels, traditionalLabels, OCTAVE_SHIFT_RANGE, noteName } from "./keymap.js";
 import { FEELS, feelById, computeVelocity } from "./feel.js";
 import { initAudio, noteOn, noteOff, allNotesOff, audioTime } from "./audio.js";
-import { Keyboard } from "./keyboard.js";
+import { Keyboard, KBD_SPAN } from "./keyboard.js";
 import { Roll } from "./roll.js";
 import { NoteStrip } from "./strip.js";
 import { Recorder, quantizeNotes } from "./recorder.js";
@@ -13,6 +13,7 @@ const state = {
   octaveShifts: { L: 0, R: 0 },
   feels: { L: "lively", R: "lively" },
   layout: "split", // "split" (two hands) | "traditional" (one keyboard, A = middle C)
+  keyboardLo: 36,  // low note of the visible keyboard window (C2); panned by the slider
   mode: "idle", // idle | record | play
   take: [],     // last committed take's notes
   showLabels: true,
@@ -36,7 +37,7 @@ function layout() {
   const width = document.body.clientWidth;
   const kbdH = Math.min(190, Math.max(120, window.innerHeight * 0.22));
   $("keys").style.height = `${kbdH}px`;
-  keyboard.render(width, kbdH);
+  keyboard.render(width, kbdH, state.keyboardLo, state.keyboardLo + KBD_SPAN);
   roll.columnFor = (n) => keyboard.rollColumnFor(n); // narrowed top-of-key lanes (no overlap)
   strip.columnFor = (n) => keyboard.columnFor(n);    // labels stay centered over full keys
   strip.resize(width, $("notestrip").clientHeight);
@@ -106,6 +107,15 @@ function shiftOctave(hand, delta) {
   state.octaveShifts[hand] = Math.min(hi, Math.max(lo, state.octaveShifts[hand] + delta));
   refreshLabels();
   updateStatus();
+}
+
+// Pan the visible keyboard window up/down the piano (span stays constant, snaps to C).
+function setKeyboardWindow(lo) {
+  const clamped = Math.max(24, Math.min(108 - KBD_SPAN, Math.round(lo / 12) * 12));
+  if (clamped === state.keyboardLo) return;
+  state.keyboardLo = clamped;
+  layout();
+  syncUi();
 }
 
 function toggleLayout() {
@@ -327,6 +337,8 @@ function syncUi() {
   $("layout").textContent = trad ? "⌨ Traditional" : "✋ Split hands";
   $("group-L").classList.toggle("hidden", trad);
   $("label-R").textContent = trad ? "Keyboard" : "Right hand";
+  $("octslider").value = state.keyboardLo;
+  $("octrange").textContent = `${noteName(state.keyboardLo)}–${noteName(state.keyboardLo + KBD_SPAN)}`;
   updateStatus();
 }
 
@@ -360,6 +372,7 @@ $("discard").onclick = () => { state.take = []; state.selected = null; setStatus
 $("metro").onclick = () => { recorder.metronome = !recorder.metronome; syncUi(); };
 $("overdub").onclick = () => { state.overdub = !state.overdub; syncUi(); };
 $("layout").onclick = toggleLayout;
+$("octslider").oninput = (e) => setKeyboardWindow(Number(e.target.value));
 $("labels").onclick = () => { state.showLabels = !state.showLabels; refreshLabels(); };
 $("roll").addEventListener("wheel", (e) => { e.preventDefault(); roll.zoom(e.deltaY > 0 ? -1 : 1); }, { passive: false });
 window.addEventListener("resize", layout);

@@ -4,24 +4,25 @@
 
 import { isBlack, noteName } from "./keymap.js";
 
-export const KBD_LO = 36; // C2
-export const KBD_HI = 96; // C7
+export const KBD_LO = 36;  // default low note (C2)
+export const KBD_HI = 96;  // default high note (C7)
+export const KBD_SPAN = KBD_HI - KBD_LO; // 60 semitones = 5 octaves, kept constant while panning
 const BLACK_W_RATIO = 0.62;
 const BLACK_H_RATIO = 0.62;
 // Horizontal offset of each black key from the white-key boundary it sits on,
 // as a fraction of black-key width (real pianos: C#/F# lean left, D#/A# lean right).
 const BLACK_LEAN = { 1: -0.12, 3: 0.12, 6: -0.15, 8: 0, 10: 0.15 };
 
-export function buildGeometry(totalWidth, whiteHeight) {
+export function buildGeometry(totalWidth, whiteHeight, lo = KBD_LO, hi = KBD_HI) {
   const whites = [];
-  for (let n = KBD_LO; n <= KBD_HI; n++) if (!isBlack(n)) whites.push(n);
+  for (let n = lo; n <= hi; n++) if (!isBlack(n)) whites.push(n);
   const whiteW = totalWidth / whites.length;
   const blackW = whiteW * BLACK_W_RATIO;
   const blackH = whiteHeight * BLACK_H_RATIO;
 
   const geo = new Map(); // note -> {x, w, black} — key shapes at their WIDEST (base)
   whites.forEach((n, i) => geo.set(n, { x: i * whiteW, w: whiteW, black: false }));
-  for (let n = KBD_LO; n <= KBD_HI; n++) {
+  for (let n = lo; n <= hi; n++) {
     if (!isBlack(n)) continue;
     const leftWhite = geo.get(n - 1);
     const boundary = leftWhite.x + leftWhite.w;
@@ -35,7 +36,7 @@ export function buildGeometry(totalWidth, whiteHeight) {
   // are wider at their base, but the roll meets the keyboard at the top — aligning
   // notes to the base width made white notes spill over the black keys.)
   const rollGeo = new Map();
-  for (let n = KBD_LO; n <= KBD_HI; n++) {
+  for (let n = lo; n <= hi; n++) {
     const base = geo.get(n);
     if (!base) continue;
     if (base.black) { rollGeo.set(n, { x: base.x, w: base.w, black: true }); continue; }
@@ -57,8 +58,12 @@ export class Keyboard {
     this._mouseNote = null;
   }
 
-  render(width, height) {
-    const g = buildGeometry(width, height);
+  render(width, height, lo = KBD_LO, hi = KBD_HI) {
+    this.lo = lo;
+    this.hi = hi;
+    this.keyEls.clear();   // re-render replaces the SVG; drop stale element refs
+    this.labelEls.clear();
+    const g = buildGeometry(width, height, lo, hi);
     this.geometry = g;
     const svg = this.svg;
     svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
